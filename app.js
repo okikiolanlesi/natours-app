@@ -16,15 +16,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// 2) ROUTE HANDLERS
-
-// app.get('/api/v1/tours', getAllTours);
-// app.post('/api/v1/tours', createTour);
-// app.get('/api/v1/tours/:id', getTour);
-// app.patch('/api/v1/tours/:id', updateTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
-
-// 3) ROUTES
+// 3) ROUTES AND HANDLERS
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
@@ -43,5 +35,5 @@ app.use('/api/v1/users', userRouter);
 //   .patch(updateUser)
 //   .delete(deleteUser);
 
-// 4) START THE SERVER
+// 4) EXPORT APP TO SERVER.JS
 module.exports = app;
