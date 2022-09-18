@@ -13,10 +13,10 @@ const DB = process.env.DATABASE.replace(
 mongoose
   .connect(DB, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    console.log('connected');
+    console.log('DB connection successful');
   })
   .catch((error) => {
-    console.log('could not connect');
+    console.log('could not connect to MongoDB');
     console.log(error);
   });
 
