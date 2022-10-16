@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 const fs = require('fs');
 const mongoose = require('mongoose');
-const Tour = require('../../models/tourModel');
-const path = require('path');
 const dotenv = require('dotenv');
+const path = require('path');
+const Tour = require('../../models/tourModel');
 
 dotenv.config({ path: `${__dirname}/../../config.env` });
 
@@ -13,6 +14,7 @@ const DB = process.env.DATABASE.replace(
 
 mongoose
   .connect(DB, { useNewUrlParser: true, useUnifiedTopology: true })
+  // eslint-disable-next-line no-console
   .then(() => {
     console.log('connected');
   })
@@ -21,7 +23,7 @@ mongoose
     console.log(error);
   });
 
-const data = fs.readFileSync(path.join(__dirname, 'tours-simple.json'), 'utf8');
+const data = fs.readFileSync(path.join(__dirname, 'tours.json'), 'utf8');
 
 const parsedData = JSON.parse(data);
 const importData = async () => {

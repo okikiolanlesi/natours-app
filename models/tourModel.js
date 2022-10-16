@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const validator = require('validator');
+// const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -40,7 +40,7 @@ const tourSchema = new mongoose.Schema(
       validate: {
         message: 'Discount price({VALUE}) should be less than actual price',
         validator: function (val) {
-          // this only only points to the current document on new document creation and not update
+          // this only only points to the current document on new document creation and won't when we try to update an existing tour
           if (val >= this.price) {
             return false;
           }
@@ -66,6 +66,30 @@ const tourSchema = new mongoose.Schema(
     },
     startDates: [Date],
     secretTour: { type: Boolean, default: false },
+    startLocation: {
+      // GeoJSON is used to specify geo-spatial data
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number], //array of numbers in order [longitude, latitude]
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
@@ -110,10 +134,10 @@ tourSchema.pre(/^find/, function (next) {
 //   console.log(docs);
 //   next();
 // });
-tourSchema.post(/^find/, function (docs, next) {
-  console.log(`Query took ${Date.now() - this.start} milliseconds`);
-  next();
-});
+// tourSchema.post(/^find/, function (docs, next) {
+//   console.log(`Query took ${Date.now() - this.start} milliseconds`);
+//   next();
+// });
 
 // AGGREGATION MIDDLEWARE
 tourSchema.pre('aggregate', function (next) {
@@ -122,6 +146,7 @@ tourSchema.pre('aggregate', function (next) {
   });
   next();
 });
+// eslint-disable-next-line new-cap
 const Tour = new mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
