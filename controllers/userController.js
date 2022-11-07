@@ -1,6 +1,7 @@
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/userModel');
 const AppError = require('../utils/AppError');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -19,35 +20,17 @@ const filterObj = (obj, ...allowedFields) => {
 //   });
 //   return newObj;
 // };
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  res.status(200).json({
-    status: 'success',
-    data: {
-      users,
-    },
+
+exports.createUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not defined! Please use /signup instead',
   });
-});
-exports.getUser = catchAsync(async (req, res, next) => {
-  res
-    .status(500)
-    .json({ status: 'error', data: 'This route is not yet implemented' });
-});
-exports.createUser = catchAsync(async (req, res, next) => {
-  res
-    .status(500)
-    .json({ status: 'error', data: 'This route is not yet implemented' });
-});
-exports.updateUser = catchAsync(async (req, res, next) => {
-  res
-    .status(500)
-    .json({ status: 'error', data: 'This route is not yet implemented' });
-});
-exports.deleteUser = catchAsync(async (req, res, next) => {
-  res
-    .status(500)
-    .json({ status: 'error', data: 'This route is not yet implemented' });
-});
+};
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 exports.updateMe = catchAsync(async (req, res, next) => {
   // Create error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
@@ -66,7 +49,14 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
   res.status(200).json({ status: 'success', data: { user: updatedUser } });
 });
+
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user._id, { active: false });
   res.status(204).json({ status: 'success', data: null });
 });
+
+exports.getAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
+// Do NOT update passwords with this! since it doesn't use the pre save middleware to encrypt the password
+exports.updateUser = factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);
