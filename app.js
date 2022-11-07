@@ -5,13 +5,24 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
-
+const path = require('path');
 const userRouter = require('./routes/userRoutes');
 const tourRouter = require('./routes/tourRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
+
+// view engine setup
+// sets view engine to pug
+app.set('view engine', 'pug');
+
+// sets the path to the views folder (default is views)
+app.set('views', path.join(__dirname, 'views'));
+
+// Serves static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 // 1) MIDDLEWARES
 // Sets security HTTP headers
@@ -55,20 +66,15 @@ app.use(
   })
 );
 
-// Serves static files
-app.use(express.static(`${__dirname}/public`));
-
-// Logs time taken to process request
-// app.use((req, res, next) => {
-//   req.requestTime = new Date().toISOString();
-//   // console.log(req.headers);
-//   next();
-// });
-
 // 3) ROUTES AND HANDLERS
-
+app.get('/', (req, res) => {
+  res.status(200).render('base', {
+    tour: 'The Forest Hiker',
+  });
+});
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 //
 app.all('*', (req, res, next) => {
   // res.status(404).json({

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 // const validator = require('validator');
+// const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -31,6 +32,7 @@ const tourSchema = new mongoose.Schema(
       default: 4.7,
       min: [1, 'Rating must be >= 1'],
       max: [5, 'Rating must be <= 5'],
+      set: (val) => Math.round(val * 10) / 10,
     },
     ratingsQuantity: { type: Number, default: 0 },
 
@@ -90,15 +92,34 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
+    guides: [
+      {
+        // Array of ObjectIds
+        type: mongoose.Schema.ObjectId,
+        // Reference to the User model
+        ref: 'User',
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
 );
+// tourSchema.index({ price: 1 });
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+// Indexing for geospatial data (2dsphere) is required for geoJSON data types to work properly in MongoDB
+tourSchema.index({ startLocation: '2dsphere' });
 // VIRTUAL PROPERTIES do not get save to the database but is calculated and appears after getting the data
 tourSchema.virtual('durationWeeks').get(function () {
   return Math.ceil(this.duration / 7);
+});
+// Virtual populate - populate the reviews field in the tour document with the reviews of the tour
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
 });
 
 // DOCUMENT MIDDLEWARE runs before or after the .save() and. create() command is executed but not on .insertMany()
@@ -107,8 +128,8 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
-// tourSchema.pre('save', function (next) {
-//   console.log('Will save document...');
+// tourSchema.pre('save', async function (next) {
+//   this.guides = await User.find({ _id: { $in: this.guides } });
 //   next();
 // });
 
@@ -118,7 +139,15 @@ tourSchema.pre('save', function (next) {
 // });
 
 // QUERY MIDDLEWARE
-// tourSchema.pre('find', function (next) {
+// Query middleware does not have access to the document but only to the query
+tourSchema.pre(/^find/, function (next) {
+  // .populate() is a mongoose method that allows us to populate the fields of a document with data from another collection
+  // path is the name of the field in the document that we want to populate
+  // select is the fields that we want to select from the other collection that we want to populate
+  this.populate({ path: 'guides', select: '-__v -passwordChangedAt' });
+  next();
+});
+
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
@@ -139,13 +168,13 @@ tourSchema.pre(/^find/, function (next) {
 //   next();
 // });
 
-// AGGREGATION MIDDLEWARE
-tourSchema.pre('aggregate', function (next) {
-  this._pipeline.unshift({
-    $match: { secretTour: { $ne: true } },
-  });
-  next();
-});
+// // AGGREGATION MIDDLEWARE
+// tourSchema.pre('aggregate', function (next) {
+//   this._pipeline.unshift({
+//     $match: { secretTour: { $ne: true } },
+//   });
+//   next();
+// });
 // eslint-disable-next-line new-cap
 const Tour = new mongoose.model('Tour', tourSchema);
 
