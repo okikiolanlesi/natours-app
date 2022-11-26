@@ -94,8 +94,6 @@ exports.createBookingCheckout = catchAsync(async (req, res, next) => {
     //     date.date.toISOString() ===
     //     response.data.data.metadata.items[0].date.date
     // );
-    // console.log(response.data.data.metadata.items[0].date);
-    // console.log(tour.startDates[index]);
     // tour.startDates[index].participants += 1;
     // await tour.save({ validateBeforeSave: false });
 

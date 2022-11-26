@@ -4,7 +4,6 @@ import { showAlert } from './alerts';
 
 export const signUp = async (name, email, password, passwordConfirm) => {
   try {
-    console.log('here');
     const res = await axios({
       method: 'POST',
       url: '/api/v1/users/signup',
@@ -15,7 +14,6 @@ export const signUp = async (name, email, password, passwordConfirm) => {
         passwordConfirm,
       },
     });
-    console.log(res);
     if (res.data.status === 'success') {
       showAlert('success', 'User signed up successfully');
       window.setTimeout(() => {

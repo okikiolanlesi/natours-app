@@ -4,7 +4,6 @@ import { showAlert } from './alerts';
 export default async function (tourId) {
   try {
     const res = await axios.get(`/api/v1/bookings/checkout-session/${tourId}`);
-    console.log('res: ', res.data);
     if (res.data.status === 'success') {
       window.location.replace(res.data.transaction.data.authorization_url);
     }

@@ -38,14 +38,12 @@ if (bookButton) {
 if (logOutBtn) logOutBtn.addEventListener('click', logout);
 if (signUpForm) {
   signUpForm.addEventListener('submit', (e) => {
-    console.log('clicked')
     e.preventDefault();
 
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const passwordConfirm = document.getElementById('passwordConfirm').value;
-    console.log(name, email, password, passwordConfirm);
     signUp(name, email, password, passwordConfirm);
   });
 }
@@ -63,7 +61,6 @@ if (updateUserDataForm) {
     form.append('name', document.getElementById('name').value);
     form.append('email', document.getElementById('email').value);
     form.append('photo', document.getElementById('photo').files[0]);
-    console.log(form);
     updateSettings(form, 'data');
   });
 }

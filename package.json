@@ -7,7 +7,7 @@
     "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
     "debug": "ndb server.js",
-    "build:js": "parcel watch ./public/js/index.js --out-dir ./public/js/ --out-file bundle.js",
+    "build:js": "parcel build ./public/js/index.js --out-dir ./public/js/ --out-file bundle.js",
     "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js/ --out-file bundle.js"
   },
   "author": "Osunronbi Okikiola",
@@ -17,6 +17,7 @@
     "axios": "^1.1.3",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.32.0",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",

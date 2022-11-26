@@ -8,6 +8,7 @@ const hpp = require('hpp');
 const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 const userRouter = require('./routes/userRoutes');
 const tourRouter = require('./routes/tourRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
@@ -31,12 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 1) MIDDLEWARES
 // Sets security HTTP headers
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: 'http://localhost:8000',
-    credentials: true,
-  })
-);
+app.use(cors());
 
 app.use(cookieParser());
 const scriptSrcUrls = [
@@ -112,6 +108,8 @@ app.use(
     ],
   })
 );
+// Compresses the response body
+app.use(compression());
 
 // 3) ROUTES AND HANDLERS
 app.use('/', viewRouter);

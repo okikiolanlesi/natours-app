@@ -6,7 +6,6 @@ import { showAlert } from './alerts';
 // type is the type of data that is being updated which is either 'password' or 'data'
 export const updateSettings = async (data, type) => {
   try {
-    console.log('something');
     const res = await axios({
       method: 'PATCH',
 
