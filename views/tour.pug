@@ -39,7 +39,7 @@ block content
             div
                 .overview-box__group
                     h2.heading-secondary.ma-bt-lg Quick facts
-                    +overviewBox('Next date', `${tour.startDates[0].toLocaleString('en-us', {month: 'long'})} ${tour.startDates[0].getFullYear()}`, 'calendar')
+                    +overviewBox('Next date', `${tour.startDates[0].date.toLocaleString('en-us', {month: 'long'})} ${tour.startDates[0].date.getFullYear()}`, 'calendar')
                     +overviewBox('Duration', `${tour.duration} days`, 'clock')
                     +overviewBox('Difficulty', `${tour.difficulty}`, 'flag')
                     +overviewBox('Participants', `${tour.maxGroupSize} people`, 'user')
