@@ -12,13 +12,23 @@ module.exports = class Email {
   newTransport() {
     if (process.env.NODE_ENV === 'production') {
       // Since my sendgrid account is not verified, Email is not sent
+      //   return nodemailer.createTransport({
+      //     service: 'SendGrid',
+      //     auth: {
+      //       // You can find this in your SendGrid account
+      //       // Remember to add this to your .env file, i haven't done it yet because I don't have a sendgrid account
+      //       user: process.env.SENDGRID_USERNAME,
+      //       pass: process.env.SENDGRID_PASSWORD,
+      //     },
+      //   });
+      // }
       return nodemailer.createTransport({
-        service: 'SendGrid',
+        service: 'Gmail',
         auth: {
           // You can find this in your SendGrid account
           // Remember to add this to your .env file, i haven't done it yet because I don't have a sendgrid account
-          user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_PASSWORD,
+          user: process.env.GMAIL_USERNAME,
+          pass: process.env.GMAIL_PASSWORD,
         },
       });
     }

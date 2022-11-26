@@ -37,12 +37,12 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   }
 
   // 1b - check if the tour is already booked by the user
-  // const alreadyBooked = await Booking.findOne({
-  //   $and: [{ tour: req.params.tourId }, { user: req.user.id }],
-  // });
+  const alreadyBooked = await Booking.findOne({
+    $and: [{ tour: req.params.tourId }, { user: req.user.id }],
+  });
 
-  // if (alreadyBooked)
-  //   return next(new AppError('You have already booked this tour', 400));
+  if (alreadyBooked)
+    return next(new AppError('You have already booked this tour', 400));
 
   // 2) Create checkout session/transaction
   const transaction = await payStack.transaction.initialize({
