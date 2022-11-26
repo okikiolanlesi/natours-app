@@ -8,6 +8,7 @@ router
   .route('/')
   .post(
     authController.restrictTo('user'),
+    reviewController.checkIfUserBookedTheTour,
     reviewController.setTourUserIds,
     reviewController.createReview
   )

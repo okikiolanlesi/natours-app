@@ -2,12 +2,17 @@ const express = require('express');
 const tourController = require('../controllers/tourController');
 const authController = require('../controllers/authController');
 const reviewRouter = require('./reviewRoutes');
+const bookingRouter = require('./bookingRoutes');
 
 const router = express.Router();
 
 // router.param('id', tourController.checkId);
 
 router.use('/:tourId/reviews', reviewRouter);
+router.use('/:tourId/bookings', bookingRouter);
+
+router.get('/search', tourController.searchTours);
+router.get('/autocomplete', tourController.autoComplete);
 router
   .route('/top-5-cheap')
   .get(tourController.aliasTopTours, tourController.getAllTours);
@@ -31,6 +36,8 @@ router
   .post(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
+    tourController.uploadTourImages,
+    tourController.resizeTourImages,
     tourController.createTour
   );
 router
@@ -39,6 +46,8 @@ router
   .patch(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
+    tourController.uploadTourImages,
+    tourController.resizeTourImages,
     tourController.updateTour
   )
   .delete(

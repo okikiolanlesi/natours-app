@@ -1,3 +1,5 @@
+const multer = require('multer');
+const sharp = require('sharp');
 const catchAsync = require('../utils/catchAsync');
 const Tour = require('../models/tourModel');
 const factory = require('./handlerFactory');
@@ -12,7 +14,51 @@ const AppError = require('../utils/AppError');
 //   }
 //   next();
 // };
+const multerStorage = multer.memoryStorage();
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload only images.', 400), false);
+  }
+};
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 
+exports.uploadTourImages = upload.fields([
+  { name: 'imageCover', maxCount: 1 },
+  { name: 'images', maxCount: 3 },
+]);
+// if you don't need to group your pictures just use the below statement
+// upload.array('images', 5 );
+exports.resizeTourImages = catchAsync(async (req, res, next) => {
+  if (!req.files.imageCover || !req.files.images) return next();
+  // 1) Cover image
+  const imageCoverFilename = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+  req.body.imageCover = imageCoverFilename;
+  sharp(req.files.imageCover[0].buffer)
+    .resize(2000, 1333)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/tours/${imageCoverFilename}`);
+
+  // 2) Images
+  // We use promise.all because we want to wait for all the images to be resized before we move on to the next middleware, without this we will get an error due to the fact that the images will not be resized in time
+  req.body.images = [];
+  await Promise.all(
+    req.files.images.map(async (image, index) => {
+      const filename = `tour-${req.params.id}-${Date.now()}-${index + 1}.jpeg`;
+
+      sharp(image.buffer)
+        .resize(500, 700)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${filename}`);
+      req.body.images.push(filename);
+    })
+  );
+
+  next();
+});
 exports.aliasTopTours = catchAsync((req, res, next) => {
   req.query.limit = '5';
   req.query.sort = '-ratingsAverage,price';
@@ -156,3 +202,64 @@ exports.getTour = factory.getOne(Tour, { path: 'reviews' });
 exports.createTour = factory.createOne(Tour);
 exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
+
+exports.searchTours = catchAsync(async (req, res, next) => {
+  const output = await Tour.aggregate([
+    {
+      $search: {
+        index: 'default',
+        text: {
+          query: req.body.search,
+          path: 'name',
+          fuzzy: {
+            maxEdits: 2,
+            maxExpansions: 100,
+          },
+        },
+      },
+    },
+    {
+      $limit: 5,
+    },
+    {
+      $project: {
+        name: 1,
+      },
+    },
+  ]);
+  res.status(200).json({
+    status: 'success',
+    results: output.length,
+    data: { output },
+  });
+});
+exports.autoComplete = catchAsync(async (req, res, next) => {
+  const output = await Tour.aggregate([
+    {
+      $search: {
+        index: 'autocomplete',
+        autocomplete: {
+          path: 'name',
+          query: req.body.search,
+          fuzzy: {
+            maxEdits: 1,
+            // maxExpansions: 100,
+          },
+        },
+      },
+    },
+    {
+      $limit: 5,
+    },
+    {
+      $project: {
+        name: 1,
+      },
+    },
+  ]);
+  res.status(200).json({
+    status: 'success',
+    results: output.length,
+    data: { output },
+  });
+});

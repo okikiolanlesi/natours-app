@@ -1,23 +1,30 @@
 doctype html
 html
     head
-        meta(charset='utf-8')
-        meta(name="viewport" content="width=device-width, initial-scale=1.0") 
-        title Natours | Exciting tours for adventurous people
-        link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300i,700")
-        link(rel='stylesheet', href='css/style.css')
-        link(rel='shortcut icon', type='image/png', href='img/favicon.png')
+        block head
+            meta(charset='utf-8')
+            meta(name="viewport" content="width=device-width, initial-scale=1.0") 
+            title= `Natours | ${title} tour`
+            link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300i,700")
+            link(rel='stylesheet', href='/css/style.css')
+            link(rel='shortcut icon', type='image/png', href='/img/favicon.png')
 
     body
         //- Header
-        include _pug
+        //- Header is a partial and is included in the base.pug file using the include directive 
+        include _header
 
         // Content
-        section.overview
-            tour= tour
+        //- block is used to replace the block content in base.pug with the content of other files. Used in tour.pug for extending the base.pug file
+        block content
+            h1 This is the default content
 
         //- Footer
+        //- Footer is a partial and is included in the base.pug file using the include directive
         include _footer
+
+        script(src='/js/bundle.js')
+
 
 
 

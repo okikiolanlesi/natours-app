@@ -66,7 +66,20 @@ const tourSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
-    startDates: [Date],
+    startDates: [
+      {
+        date: { type: Date },
+        participants: {
+          type: Number,
+          default: 0,
+          max: [this.maxGroupSize, 'Participants cannot exceed max group size'],
+        },
+        soldOut: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
     secretTour: { type: Boolean, default: false },
     startLocation: {
       // GeoJSON is used to specify geo-spatial data
@@ -153,6 +166,7 @@ tourSchema.pre(/^find/, function (next) {
   this.start = Date.now();
   next();
 });
+
 // long method
 // tourSchema.pre('findOne', function (next) {
 //   this.find({ secretTour: { $ne: true } });
