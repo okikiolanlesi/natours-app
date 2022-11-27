@@ -71,8 +71,10 @@ exports.updateUserData = catchAsync(async (req, res, next) => {
 });
 
 exports.getMyTours = catchAsync(async (req, res, next) => {
+  //  helps to get rid of query params in url since the trxref and reference are not needed
   if (req.query.trxref || req.query.reference) {
-    return res.redirect(req.originalUrl.split('?')[0]);
+    const urlReformed = `${req.originalUrl.split('?')[0]}?alert=booking`;
+    return res.redirect(urlReformed);
   }
   // 1. Find all bookings
   const bookings = await Booking.find({ user: req.user.id });

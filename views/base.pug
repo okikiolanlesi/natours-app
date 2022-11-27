@@ -9,7 +9,7 @@ html
             link(rel='stylesheet', href='/css/style.css')
             link(rel='shortcut icon', type='image/png', href='/img/favicon.png')
 
-    body
+    body(data-alert= `${alert ? alert : ''}`)
         //- Header
         //- Header is a partial and is included in the base.pug file using the include directive 
         include _header

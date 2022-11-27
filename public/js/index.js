@@ -4,6 +4,7 @@ import { login, logout } from './login';
 import { displayMap } from './mapbox.js';
 import { updateSettings } from './updateSettings.js';
 import bookTour from './payStack.js';
+import { showAlert } from './alerts.js';
 
 // DOM ELEMENTS
 const mapbox = document.getElementById('map');
@@ -81,3 +82,6 @@ if (updatePasswordForm) {
     document.getElementById('password-confirm').value = '';
   });
 }
+
+const alertMessage = document.querySelector('body').dataset.alert;
+if (alertMessage) showAlert('success', alertMessage, 20);

@@ -1,9 +1,16 @@
 const express = require('express');
 const viewController = require('../controllers/viewController');
 const authController = require('../controllers/authController');
-const bookingController = require('../controllers/bookingController');
-
+// const bookingController = require('../controllers/bookingController');
 const router = express.Router();
+
+router.use((req, res, next) => {
+  const { alert } = req.query;
+  if (alert === 'booking') {
+    res.locals.alert =
+      "Your booking was successful! Please check your email for a confirmation. If your booking doesn't show up here immediately, please come back later.";
+  }
+});
 // router.use(authController.isLoggedIn);
 router.get('/', authController.isLoggedIn, viewController.getOverview);
 // router.get(
@@ -12,7 +19,6 @@ router.get('/', authController.isLoggedIn, viewController.getOverview);
 //   authController.protect,
 //   viewController.getMyTours
 // );
-router.post('/paystackWebhook', bookingController.paystackWebHook);
 router.get('/me', authController.protect, viewController.getAccount);
 router.get('/login', authController.isLoggedIn, viewController.getLoginForm);
 router.get('/signup', authController.isLoggedIn, viewController.getSignUpForm);
