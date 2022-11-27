@@ -5,6 +5,7 @@ const bookingSchema = new mongoose.Schema(
     bookingId: {
       type: String,
       required: [true, 'Booking must have a bookingId'],
+      unique: true,
     },
     tour: {
       type: mongoose.Schema.ObjectId,
@@ -24,9 +25,13 @@ const bookingSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    date: {
+    tourDate: {
       type: Date,
       required: [true, 'Booking must have a date'],
+    },
+    paidAt: {
+      type: Date,
+      required: [true, 'Booking must have a paidAt date'],
     },
   },
   {

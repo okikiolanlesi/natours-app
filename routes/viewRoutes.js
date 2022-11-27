@@ -6,18 +6,13 @@ const bookingController = require('../controllers/bookingController');
 const router = express.Router();
 // router.use(authController.isLoggedIn);
 router.get('/', authController.isLoggedIn, viewController.getOverview);
-router.get(
-  '/createBooking',
-  bookingController.createBookingCheckout,
-  authController.protect,
-  viewController.getMyTours
-);
-router.post(
-  '/paystackWebhook',
-  bookingController.paystackWebHook
-  // authController.protect,
-  // viewController.getMyTours
-);
+// router.get(
+//   '/createBooking',
+//   // bookingController.createBookingCheckout,
+//   authController.protect,
+//   viewController.getMyTours
+// );
+router.post('/paystackWebhook', bookingController.paystackWebHook);
 router.get('/me', authController.protect, viewController.getAccount);
 router.get('/login', authController.isLoggedIn, viewController.getLoginForm);
 router.get('/signup', authController.isLoggedIn, viewController.getSignUpForm);

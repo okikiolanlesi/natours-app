@@ -9,6 +9,7 @@ router.get(
   '/checkout-session/:tourId/date/:tourDate',
   bookingController.getCheckoutSession
 );
+router.post('/paystackWebhook', bookingController.paystackWebHook);
 
 router.use(authController.restrictTo('admin', 'lead-guide'));
 
