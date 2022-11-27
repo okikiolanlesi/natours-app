@@ -71,6 +71,9 @@ exports.updateUserData = catchAsync(async (req, res, next) => {
 });
 
 exports.getMyTours = catchAsync(async (req, res, next) => {
+  if (req.query.trxref || req.query.reference) {
+    return res.redirect(req.originalUrl.split('?')[0]);
+  }
   // 1. Find all bookings
   const bookings = await Booking.find({ user: req.user.id });
   // 2. Find tours with the returned IDs
