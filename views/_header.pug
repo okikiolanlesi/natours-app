@@ -8,7 +8,7 @@ header.header
             a.nav__el.nav__el--logout(href='#') Log Out
             a.nav__el.nav__el--cta(href="/me") 
                 if user.photo
-                    img.nav__user-img(src=`/img/users/${user.photo}` alt=`Photo of ${user.name}`)
+                    img.nav__user-img(src=`${user.photo}` alt=`Photo of ${user.name}`)
                 else
                     img.nav__user-img(src="/img/users/default.jpg" alt="User photo")
                 span= user.name.split(' ')[0]

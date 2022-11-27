@@ -19,6 +19,9 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 
+// the following line is for heroku
+app.enable('trust proxy');
+
 // view engine setup
 // sets view engine to pug
 app.set('view engine', 'pug');
@@ -51,8 +54,7 @@ const connectSrcUrls = [
   'https://b.tiles.mapbox.com/',
   'https://events.mapbox.com/',
   'http://127.0.0.1:8000',
-  'ws://localhost:60986/',
-  'ws://localhost:60986/',
+  'https://res.cloudinary.com/',
 ];
 const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 app.use(
@@ -64,7 +66,7 @@ app.use(
       styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
       workerSrc: ["'self'", 'blob:'],
       objectSrc: [],
-      imgSrc: ["'self'", 'blob:', 'data:'],
+      imgSrc: ["'self'", 'blob:', 'data:', 'https://res.cloudinary.com/'],
       fontSrc: ["'self'", ...fontSrcUrls],
     },
   })

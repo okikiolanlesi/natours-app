@@ -9,6 +9,7 @@ module.exports = class Email {
     this.firstName = user.name.split(' ')[0];
     this.url = url;
   }
+
   newTransport() {
     if (process.env.NODE_ENV === 'production') {
       // Since my sendgrid account is not verified, Email is not sent

@@ -10,15 +10,15 @@ const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
-
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
     maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
     // httpOnly: true means that the cookie cannot be accessed or modified in any way by the browser
     httpOnly: true,
   };
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  if (req.secure || req.headers['x-forwarded-proto'] === 'https')
+    cookieOptions.secure = true;
 
   res.cookie('jwt', token, cookieOptions);
 
@@ -57,7 +57,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
     await new Email(newUser, url).sendConfirmEmail();
 
-    createSendToken(newUser, 201, res);
+    createSendToken(newUser, 201, req, res);
   } catch (err) {
     await User.deleteOne({ _id: newUser._id });
     return next(
@@ -122,7 +122,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   // If everything is okay send token to client
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -274,7 +274,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   //  We did this in the userModel by setting up a pre save middleware/hook
   await user.save();
   // 4) Log the user in, send JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 exports.updatePassword = catchAsync(async (req, res, next) => {
   if (
@@ -292,7 +292,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   user.save();
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 exports.logout = catchAsync((req, res, next) => {
   res.cookie('jwt', 'loggedout', {

@@ -1,17 +1,18 @@
+// const { promisify } = require('util');
 const multer = require('multer');
-const sharp = require('sharp');
+// const sharp = require('sharp');
+const cloudinary = require('cloudinary').v2;
+const streamifier = require('streamifier');
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/userModel');
 const AppError = require('../utils/AppError');
 const factory = require('./handlerFactory');
-const cloudinary = require('cloudinary').v2;
-const streamifier = require('streamifier');
-const { promisify } = require('util');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
 });
 
 // Saves file to file system
@@ -81,18 +82,31 @@ exports.resizeAndUploadUserPhoto = catchAsync(async (req, res, next) => {
   // promise version of cloudinary.uploader.upload_stream so we can use await with it instead of callback function and then get the desired response
   // Got this from   https://support.cloudinary.com/hc/en-us/community/posts/360007581379-Correct-way-of-uploading-from-buffer-
 
-  const uploadStream = (req) => {
-    return new Promise((resolve, reject) => {
-      let stream = cloudinary.uploader.upload_stream(
+  // eslint-disable-next-line no-shadow
+  const uploadStream = (req) =>
+    new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
         {
           // resize will resize the image to 500x500 and crop it to a square
-          eager: [{ width: 500, height: 500, crop: 'limit' }],
+          eager: [
+            {
+              width: 500,
+              height: 500,
+              crop: 'fill',
+              gravity: 'auto',
+              fetch_format: 'auto',
+              quality: 'auto',
+            },
+          ],
+          // You can tell Cloudinary to generate eager transformations in the background by setting the eager_async parameter to true
+          // eager_async: true,
           // this specifies the folder under which the image is stored in cloudinary
           folder: 'natoursUsers',
           // the public_id is used to specify the file name
           public_id: req.user.id,
+          overwrite: true,
         },
-        function (error, result) {
+        (error, result) => {
           if (error) {
             reject(error);
           } else {
@@ -102,9 +116,9 @@ exports.resizeAndUploadUserPhoto = catchAsync(async (req, res, next) => {
       );
       streamifier.createReadStream(req.file.buffer).pipe(stream);
     });
-  };
   const result = await uploadStream(req);
-  req.body.photo = result.secure_url;
+  console.log(result.eager[0].secure_url);
+  req.body.photo = result.eager[0].secure_url;
   next();
 });
 
