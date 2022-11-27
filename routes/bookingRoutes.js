@@ -4,12 +4,12 @@ const bookingController = require('../controllers/bookingController');
 
 const router = express.Router({ mergeParams: true });
 
+router.post('/paystackWebhook', bookingController.paystackWebHook);
 router.use(authController.protect);
 router.get(
   '/checkout-session/:tourId/date/:tourDate',
   bookingController.getCheckoutSession
 );
-router.post('/paystackWebhook', bookingController.paystackWebHook);
 
 router.use(authController.restrictTo('admin', 'lead-guide'));
 
