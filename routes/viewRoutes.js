@@ -14,9 +14,9 @@ router.get(
 );
 router.get(
   '/paystackWebhook',
-  bookingController.paystackWebHook,
-  authController.protect,
-  viewController.getMyTours
+  bookingController.paystackWebHook
+  // authController.protect,
+  // viewController.getMyTours
 );
 router.get('/me', authController.protect, viewController.getAccount);
 router.get('/login', authController.isLoggedIn, viewController.getLoginForm);

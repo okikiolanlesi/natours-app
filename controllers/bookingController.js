@@ -17,8 +17,12 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   const tourDate = tour.startDates.filter(
     (date) => date.date.toISOString() === req.params.tourDate
   );
+  if (!tourDate)
+    return next(new AppError('There is no tour with that date', 404));
+
   if (tourDate[0].date < Date.now())
     return next(new AppError('You cannot book a tour in the past', 400));
+
   if (tourDate[0].soldOut === true) {
     return next(
       new AppError('Sorry, this tour is fully booked for this date', 400)
