@@ -10,6 +10,7 @@ router.use((req, res, next) => {
     res.locals.alert =
       "Your booking was successful! Please check your email for a confirmation. If your booking doesn't show up here immediately, please come back later.";
   }
+  next();
 });
 // router.use(authController.isLoggedIn);
 router.get('/', authController.isLoggedIn, viewController.getOverview);
