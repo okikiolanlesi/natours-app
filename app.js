@@ -36,6 +36,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Sets security HTTP headers
 app.use(cookieParser());
 app.use(cors());
+// Access-Control-Allow-Origin *
+// api.natours.com, front-end natours.com
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }));
+
+// This is for the preflight request which is sent by the browser before the actual request is sent to the server to check if the server allows the request
+app.options('*', cors());
+// only allows complex requests from the specified origin on the specified route
+// app.options('/api/v1/tours/:id', cors());
 
 app.use(cookieParser());
 const scriptSrcUrls = [
