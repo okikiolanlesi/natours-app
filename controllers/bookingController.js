@@ -117,7 +117,12 @@ exports.createBookingCheckout = catchAsync(async (req, res, next) => {
 
   res.redirect(req.originalUrl.split('?')[0]);
 });
-
+exports.paystackWebHook = catchAsync(async (req, res, next) => {
+  console.log(req.body);
+  console.log(req.headers);
+  console.log(req.query);
+  res.status(200).json({ status: 'success' });
+});
 exports.createBooking = factory.createOne(Booking);
 exports.getBooking = factory.getOne(Booking);
 exports.getAllBookings = factory.getAll(Booking);
