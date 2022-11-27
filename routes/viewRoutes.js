@@ -12,7 +12,7 @@ router.get(
   authController.protect,
   viewController.getMyTours
 );
-router.get(
+router.post(
   '/paystackWebhook',
   bookingController.paystackWebHook
   // authController.protect,
