@@ -17,7 +17,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   const tourDate = tour.startDates.filter(
     (date) => date.date.toISOString() === req.params.tourDate
   );
-  if (tourDate[0] < Date.now())
+  if (tourDate[0].date < Date.now())
     return next(new AppError('You cannot book a tour in the past', 400));
   if (tourDate[0].soldOut === true) {
     return next(
@@ -78,12 +78,13 @@ exports.createBookingCheckout = catchAsync(async (req, res, next) => {
   );
   // if transaction is successful create a booking and update the tour date participants
   if (response.data.data.status === 'success') {
-    const { tourId, userId } = response.data.data.metadata;
+    const { tourId, userId, items } = response.data.data.metadata;
     await Booking.create({
       bookingId: req.query.reference,
       tour: tourId,
       user: userId,
       price: response.data.data.amount / 100,
+      date: items[0].date.date,
     });
 
     // This way might cause concurrency issues

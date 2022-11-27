@@ -117,7 +117,6 @@ exports.resizeAndUploadUserPhoto = catchAsync(async (req, res, next) => {
       streamifier.createReadStream(req.file.buffer).pipe(stream);
     });
   const result = await uploadStream(req);
-  console.log(result.eager[0].secure_url);
   req.body.photo = result.eager[0].secure_url;
   next();
 });

@@ -24,6 +24,10 @@ const bookingSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    date: {
+      type: Date,
+      required: [true, 'Booking must have a date'],
+    },
   },
   {
     toJSON: { virtuals: true },
